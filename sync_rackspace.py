@@ -21,7 +21,6 @@ class SyncRackspace(object):
         self.write_to_hosts()
 
     def get_config_info(self):
-        # Read the rackspace api credentials from the connect.cfg file
         print "Reading the connect.cfg file..."
 
         config = ConfigParser.RawConfigParser()
@@ -48,7 +47,7 @@ class SyncRackspace(object):
 
     def get_auth_token(self):
         print "Getting authentication token..."
-        # Get AUTH-TOKEN
+        
         token_url = 'https://identity.api.rackspacecloud.com/v2.0/tokens'
         payload = {"auth":{"RAX-KSKEY:apiKeyCredentials":
                   {"username":"%s" % self.username, "apiKey":"%s" % self.api_key}}}
@@ -58,9 +57,9 @@ class SyncRackspace(object):
 
     def get_server_info(self):
         print "Getting server information..."
-        # Get Server info for first generation
         headers = {"X-Auth-Token": "%s" % self.token}
 
+        # Get Server info for first generation servers
         firstgen_server_api_url = None
         for server_dict in self.token_request.json()['access']['serviceCatalog']:
             if server_dict['name'] == 'cloudServers':
@@ -81,7 +80,8 @@ class SyncRackspace(object):
         second_gen_json = request.json()
 
 
-        # Create list of all server names and ips
+        # Append to the list, self.server_info, tuples with server names in position 0 and server ips
+        # in position 1
         for server in first_gen_json['servers']:
             self.server_info.append((server['name'], server['addresses']['public'][0]))
         for server in second_gen_json['servers']:
@@ -89,7 +89,7 @@ class SyncRackspace(object):
 
     def write_to_hosts(self):
         print "Writing to hosts file..."
-        # Get information from the ect/hosts file
+
         old_lines = []
         with open('/etc/hosts') as fp:
             for line in fp.readlines():
@@ -103,11 +103,12 @@ class SyncRackspace(object):
                     if server[0] == ip:
                         # If the ip address is already in the hosts file, and it has the alias from
                         # rackspace associated with it, remove the ip/alias info from the server_info
-                        # lise and continue
+                        # list and continue
                         if server[1] in line.split():
                             self.server_info.pop(self.server_info.index(server))
                             continue
-                        # If it doesn't have the alias from rackspace associated with it, add that name
+                        # If it doesn't have the alias from rackspace associated with it, add that alias
+                        # but also keep the aliases it already has
                         else:
                             line = line + " %s" % server[1]
                             old_lines.append(line)
@@ -115,15 +116,16 @@ class SyncRackspace(object):
                 else:
                     old_lines.append(line)
 
-        # Write to a temporary file
-        with open ('/tmp/new_hosts.tmp', 'wb') as fp:
+        with open ('/tmp/temp_hosts.tmp', 'wb') as fp:
             for line in self.server_info:
                 fp.write('%s\t%s\n' % (line[0], line[1]))
             for line in old_lines:
                 fp.write(line)
 
         # Overwrite the /etc/hosts file with the new information
-        os.system('sudo mv /tmp/new_hosts.tmp /etc/hosts')
+        print "Enter sudo password below to allow system to write to /etc/hosts"
+        print "None of your current information will be overwritten"
+        os.system('sudo mv /tmp/temp_hosts.tmp /etc/hosts')
         print "Success!"
 
 if __name__ == "__main__":
