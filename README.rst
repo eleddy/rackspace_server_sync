@@ -21,7 +21,7 @@ This script uses username and api_key information found in a local 'connect.cfg'
     username = <your_username>
     api_key = <your_password>
 
-Additionally, the script assumes you have access to root privileges since the /etc/hosts file is protected. You will be prompted to enter your password before the script overwrites the /etc/hosts file.
+Additionally, the script assumes that the hosts file is found under /etc, and that you have access to root privileges since the /etc/hosts file is protected. You will be prompted to enter your password before the script overwrites the hosts file.
 
 =============
 Helpful Stuff
