@@ -80,12 +80,12 @@ class SyncRackspace(object):
                                          headers=headers)
         second_gen_json = request.json()
 
+
         # Create list of all server names and ips
-        server_info = []
         for server in first_gen_json['servers']:
-            server_info.append((server['name'], server['addresses']['public'][0]))
+            self.server_info.append((server['name'], server['addresses']['public'][0]))
         for server in second_gen_json['servers']:
-            server_info.append((server['name'], server['accessIPv4']))
+            self.server_info.append((server['name'], server['accessIPv4']))
 
     def write_to_hosts(self):
         print "Writing to hosts file..."
