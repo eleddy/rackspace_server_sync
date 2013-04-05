@@ -112,6 +112,7 @@ class SyncRackspace(object):
                         else:
                             line = line + " %s" % server[1]
                             old_lines.append(line)
+                            self.server_info.pop(self.server_info.index(server))
                             continue
                 else:
                     old_lines.append(line)
