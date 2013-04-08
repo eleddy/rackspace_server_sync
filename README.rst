@@ -16,7 +16,7 @@ Concepts
 Solution
 ========
 This script uses username and api_key information found in a local 'connect.cfg' file to collect server information (ip addresses and aliases), and writes that information to the /etc/hosts file. It will only add server information if 1) the ip and alias are not already in the hosts file, or 2) if the hosts file already has the ip but not the alias, in which case the alias is appended on to the list of aliases associated with that ip.  To run the script, first make sure to create a connect.cfg file in the same directory as sync_rackspace.py with the following format:
-
+::
     [rackspace]
     username = <your_username>
     api_key = <your_password>
