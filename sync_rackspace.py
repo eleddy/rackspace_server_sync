@@ -110,7 +110,7 @@ class SyncRackspace(object):
                         # If it doesn't have the alias from rackspace associated with it, add that alias
                         # but also keep the aliases it already has
                         else:
-                            line = line + " %s" % server[1]
+                            line = "%s %s" % (line, server[1])
                             old_lines.append(line)
                             self.server_info.pop(self.server_info.index(server))
                             continue
@@ -119,7 +119,7 @@ class SyncRackspace(object):
 
         with open ('/tmp/temp_hosts.tmp', 'wb') as fp:
             for line in self.server_info:
-                fp.write('%s\t%s\n' % (line[0], line[1]))
+                fp.write('%s\t%s\n' % (line[1], line[0]))
             for line in old_lines:
                 fp.write(line)
 
